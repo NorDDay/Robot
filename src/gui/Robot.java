@@ -1,5 +1,7 @@
 package gui;
 
+import barrier.AbstractBarrier;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Observable;
@@ -15,6 +17,8 @@ public class Robot extends Observable {
     private static final double maxVelocity = 0.1;
     private static final double maxAngularVelocity = 0.001;
 
+
+    public ArrayList<AbstractBarrier> barriers = new ArrayList<>();
     public volatile ArrayList<Point> path = new ArrayList<>();
     public Robot(){
 
@@ -42,7 +46,68 @@ public class Robot extends Observable {
         // gen path
     }
 
+    public void createGraph(){
+        ArrayList<ArrayList<Edge>> graph = new ArrayList<>();
+        for(int i=0;i<barriers.size()*4 + 2;i++){
+            graph.add(new ArrayList<>());
+        }
+        for(int i=0;i<barriers.size();i++){
+            for(int j=0;j<barriers.get(i).edges.size();j++){
+                graph.get(i*4+j+1).addAll(createEdges(barriers.get(i).edges.get(j)));
+            }
+        }
+        //graph.get(0).add;
+    }
 
+    public ArrayList<Edge> createEdges(Point pos){
+        ArrayList<Edge> edges = new ArrayList<>();
+        for(int i=0;i<barriers.size();i++){
+            for(int j=0;j<barriers.get(i).edges.size();j++){
+                if(!(barriers.get(i).edges.get(j).x == pos.x && barriers.get(i).edges.get(j).y == pos.y)){
+                    if(checkWay(new Line(barriers.get(i).edges.get(j), pos))){
+                        edges.add(new Edge(i*4+j+1,distance(pos,barriers.get(i).edges.get(j) ),barriers.get(i).edges.get(j)));
+                    }
+                }
+            }
+        }
+        return edges;
+    }
+
+    public boolean checkWay(Line line){
+        for(int i=0;i<barriers.size();i++){
+            for(int j=0;j<barriers.get(i).collisionPairs.size();j++){
+                if(!intersect(line.a , line.b, barriers.get(i).collisionPairs.get(j).a,  barriers.get(i).collisionPairs.get(j).b)){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public int area (Point a, Point b, Point c) {
+        return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+    }
+
+    public boolean intersect_1 (int a, int b, int c, int d) {
+        if (a > b) {
+            int temp = a;
+            a = b;
+            b = temp;
+        }
+        if (c > d) {
+            int temp = c;
+            c = d;
+            d = temp;
+        }
+        return Math.max(a,c) <= Math.min(b,d);
+    }
+
+    public boolean intersect (Point a, Point b, Point c, Point d) {
+        return intersect_1(a.x, b.x, c.x, d.x)
+                && intersect_1(a.y, b.y, c.y, d.y)
+                && area(a, b, c) * area(a, b, d) <= 0
+                && area(c, d, a) * area(c, d, b) <= 0;
+    }
     protected void onModelUpdateEvent()
     {
         double distance = distance(m_targetPositionX, m_targetPositionY,
@@ -97,7 +162,12 @@ public class Robot extends Observable {
         double diffY = y1 - y2;
         return Math.sqrt(diffX * diffX + diffY * diffY);
     }
-
+    private static double distance(Point a, Point b)
+    {
+        double diffX = a.x - b.x;
+        double diffY = a.y - b.y;
+        return Math.sqrt(diffX * diffX + diffY * diffY);
+    }
     private static double angleTo(double fromX, double fromY, double toX, double toY)
     {
         double diffX = toX - fromX;

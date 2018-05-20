@@ -11,5 +11,6 @@ public abstract class AbstractBarrier {
     public int size = 10;
 
     public ArrayList<Point> verticies = new ArrayList<>();
+    public ArrayList<Point> edges = new ArrayList<>();
     public ArrayList<Line> collisionPairs = new ArrayList<>();
 }

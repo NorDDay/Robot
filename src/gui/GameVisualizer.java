@@ -20,7 +20,7 @@ public class GameVisualizer extends JPanel
 {
     private final Timer m_timer = initTimer();
     private Robot robot;
-    ArrayList<AbstractBarrier> barriers = new ArrayList<>();
+
 
     private static Timer initTimer() 
     {
@@ -61,7 +61,7 @@ public class GameVisualizer extends JPanel
                 }
                 else if(e.getButton() == 3){
                     RectangleBarrier square = new RectangleBarrier(e.getPoint());
-                    barriers.add(square);
+                    robot.barriers.add(square);
                     robot.createPath();
                 }
                 else{
@@ -89,7 +89,7 @@ public class GameVisualizer extends JPanel
         Graphics2D g2d = (Graphics2D)g; 
         drawRobot(g2d, round(robot.getPosition().x), round(robot.getPosition().y), robot.getDirection());
         drawTarget(g2d, robot.getTargetPosition().x, robot.getTargetPosition().y);
-        for(AbstractBarrier e : barriers){
+        for(AbstractBarrier e : robot.barriers){
             drawRectangle(g2d, (RectangleBarrier) e);
         }
     }
