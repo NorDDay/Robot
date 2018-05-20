@@ -1,5 +1,8 @@
 package gui;
 
+import barrier.AbstractBarrier;
+import barrier.RectangleBarrier;
+
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Graphics;
@@ -7,6 +10,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -16,6 +20,8 @@ public class GameVisualizer extends JPanel
 {
     private final Timer m_timer = initTimer();
     private Robot robot;
+    ArrayList<AbstractBarrier> barriers = new ArrayList<>();
+
     private static Timer initTimer() 
     {
         Timer timer = new Timer("events generator", true);
@@ -54,7 +60,9 @@ public class GameVisualizer extends JPanel
                     repaint();
                 }
                 else if(e.getButton() == 3){
-                    //add barrier
+                    RectangleBarrier square = new RectangleBarrier(e.getPoint());
+                    barriers.add(square);
+                    robot.createPath();
                 }
                 else{
                     //del barrier
@@ -81,6 +89,9 @@ public class GameVisualizer extends JPanel
         Graphics2D g2d = (Graphics2D)g; 
         drawRobot(g2d, round(robot.getPosition().x), round(robot.getPosition().y), robot.getDirection());
         drawTarget(g2d, robot.getTargetPosition().x, robot.getTargetPosition().y);
+        for(AbstractBarrier e : barriers){
+            drawRectangle(g2d, (RectangleBarrier) e);
+        }
     }
     
     private static void fillOval(Graphics g, int centerX, int centerY, int diam1, int diam2)
@@ -121,8 +132,8 @@ public class GameVisualizer extends JPanel
     private void drawRectangle(Graphics2D g, RectangleBarrier square) {
         AffineTransform t = AffineTransform.getRotateInstance(0, 0, 0);
         g.setTransform(t);
-        Point center = square.getPosition();
-        int size = square.getSize();
+        Point center = square.pos;
+        int size = square.size;
         g.setColor(Color.BLUE);
         g.fillRect(center.x - size / 2, center.y - size / 2, size, size);
         g.setColor(Color.BLACK);

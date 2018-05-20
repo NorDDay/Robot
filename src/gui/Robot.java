@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Observable;
 
 public class Robot extends Observable {
@@ -13,6 +14,8 @@ public class Robot extends Observable {
 
     private static final double maxVelocity = 0.1;
     private static final double maxAngularVelocity = 0.001;
+
+    public volatile ArrayList<Point> path = new ArrayList<>();
     public Robot(){
 
     }
@@ -34,6 +37,11 @@ public class Robot extends Observable {
         m_targetPositionX = p.x;
         m_targetPositionY = p.y;
     }
+
+    public void createPath(){
+        // gen path
+    }
+
 
     protected void onModelUpdateEvent()
     {
