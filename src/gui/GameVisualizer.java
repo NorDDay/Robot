@@ -5,8 +5,7 @@ import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -50,8 +49,16 @@ public class GameVisualizer extends JPanel
             @Override
             public void mouseClicked(MouseEvent e)
             {
-                robot.setTargetPosition(e.getPoint());
-                repaint();
+                if(e.getButton() == 1) {
+                    robot.setTargetPosition(e.getPoint());
+                    repaint();
+                }
+                else if(e.getButton() == 3){
+                    //add barrier
+                }
+                else{
+                    //del barrier
+                }
             }
         });
         setDoubleBuffered(true);
@@ -110,5 +117,15 @@ public class GameVisualizer extends JPanel
         fillOval(g, x, y, 5, 5);
         g.setColor(Color.BLACK);
         drawOval(g, x, y, 5, 5);
+    }
+    private void drawRectangle(Graphics2D g, RectangleBarrier square) {
+        AffineTransform t = AffineTransform.getRotateInstance(0, 0, 0);
+        g.setTransform(t);
+        Point center = square.getPosition();
+        int size = square.getSize();
+        g.setColor(Color.BLUE);
+        g.fillRect(center.x - size / 2, center.y - size / 2, size, size);
+        g.setColor(Color.BLACK);
+        g.drawRect(center.x - size / 2, center.y - size / 2, size, size);
     }
 }

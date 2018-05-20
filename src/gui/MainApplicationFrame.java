@@ -80,6 +80,7 @@ public class MainApplicationFrame extends JFrame
         while(sc.hasNextLine()){
             String tempScanner = sc.nextLine();
             if (tempScanner.equals("Протокол работы")){
+                System.out.print(1);
                 LogWindow logWindow = createLogWindow();
                 logWindow.setLocation(sc.nextInt(), sc.nextInt());
                 logWindow.setSize(sc.nextInt(), sc.nextInt());
@@ -110,8 +111,6 @@ public class MainApplicationFrame extends JFrame
                     robots.get(i).addObserver(coordWindow);
                 i++;
                 addWindow(coordWindow);
-                LogWindow logWindow = createLogWindow();
-                addWindow(logWindow);
             }
         }
     }
