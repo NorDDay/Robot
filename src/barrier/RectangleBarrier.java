@@ -1,6 +1,7 @@
 package barrier;
 
 import gui.Line;
+import gui.PointDouble;
 
 import java.awt.*;
 
@@ -21,5 +22,8 @@ public class RectangleBarrier extends AbstractBarrier {
         edges.add(new Point(verticies.get(1).x+deltaDistance/2, verticies.get(1).y-deltaDistance/2));
         edges.add(new Point(verticies.get(2).x+deltaDistance/2, verticies.get(2).y+deltaDistance/2));
         edges.add(new Point(verticies.get(3).x-deltaDistance/2, verticies.get(3).y+deltaDistance/2));
+    }
+    public RectangleBarrier(PointDouble position) {
+       this(new Point((int)position.x, (int)position.y));
     }
 }

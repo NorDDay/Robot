@@ -66,8 +66,17 @@ public class GameVisualizer extends JPanel
                     robot.createGraph();
                 }
                 else{
+                    double minDist=10000000;
+                    int minI=-1;
+                    for(int i=0;i<robot.barriers.size();i++){
+                        if(robot.distance(e.getPoint(), robot.barriers.get(i).pos)<minDist){
+                            minDist = robot.distance(e.getPoint(), robot.barriers.get(i).pos);
+                            minI=i;
+                        }
+                    }
+                    if(minDist<10)
+                        robot.barriers.remove(minI);
                     robot.createGraph();
-                    //del barrier
                 }
             }
         });

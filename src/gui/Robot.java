@@ -25,6 +25,10 @@ public class Robot extends Observable {
     public Robot(){
 
     }
+    public Robot(PointDouble point){
+        m_robotPositionX = point.x;
+        m_robotPositionY = point.y;
+    }
     public PointDouble getPosition(){
         return new PointDouble(m_robotPositionX, m_robotPositionY);
     }
@@ -87,7 +91,6 @@ public class Robot extends Observable {
                 if(cost[minV] + graph.get(minV).get(j).cost< cost[graph.get(minV).get(j).to]){
                     cost[graph.get(minV).get(j).to] = cost[minV] + (int)graph.get(minV).get(j).cost;
                     parent[graph.get(minV).get(j).to] = minV;
-                    System.out.println(1);
                 }
             }
         }
@@ -105,7 +108,6 @@ public class Robot extends Observable {
         for(int i=0;i<st.size();i++){
             path.add((Point) st.pop());
         }
-        System.out.println(path.size());
         return path;
     }
 
@@ -174,7 +176,7 @@ public class Robot extends Observable {
             return;
         double distance = distance(path.get(curIdPos).x, path.get(curIdPos).y,
                 m_robotPositionX, m_robotPositionY);
-        if (distance < 0.5)
+        if (distance <1)
         {
             if(path.size() == curIdPos+1){
                 createGraph();
@@ -239,7 +241,7 @@ public class Robot extends Observable {
         double diffY = y1 - y2;
         return Math.sqrt(diffX * diffX + diffY * diffY);
     }
-    private static double distance(Point a, Point b)
+    public static double distance(Point a, Point b)
     {
         double diffX = a.x - b.x;
         double diffY = a.y - b.y;
