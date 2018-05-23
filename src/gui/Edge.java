@@ -11,4 +11,7 @@ public class Edge {
         cost = c;
         pos = p;
     }
+    public Edge( Point p){
+        pos = p;
+    }
 }

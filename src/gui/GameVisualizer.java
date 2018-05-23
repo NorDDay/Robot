@@ -57,14 +57,16 @@ public class GameVisualizer extends JPanel
             {
                 if(e.getButton() == 1) {
                     robot.setTargetPosition(e.getPoint());
+                    robot.createGraph();
                     repaint();
                 }
                 else if(e.getButton() == 3){
                     RectangleBarrier square = new RectangleBarrier(e.getPoint());
                     robot.barriers.add(square);
-                    robot.createPath();
+                    robot.createGraph();
                 }
                 else{
+                    robot.createGraph();
                     //del barrier
                 }
             }
