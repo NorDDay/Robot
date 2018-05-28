@@ -2,8 +2,7 @@ package gui;
 
 import java.awt.BorderLayout;
 
-import javax.swing.JInternalFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 public class GameWindow extends JInternalFrame
 {
@@ -14,6 +13,10 @@ public class GameWindow extends JInternalFrame
         m_visualizer = new GameVisualizer(robot);
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(m_visualizer, BorderLayout.CENTER);
+        JComboBox faceCombo = new JComboBox();
+        faceCombo.addItem("Добавить робота");
+        //faceCombo.addItem("SansSerif");
+        panel.add(faceCombo,BorderLayout.PAGE_START);
         getContentPane().add(panel);
         pack();
     }
