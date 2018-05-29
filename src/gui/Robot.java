@@ -54,7 +54,7 @@ public class Robot extends  AbstractRobot {
                 st.push(barriers.get((pos-1)/4).edges.get((pos-1)%4));
         }
         ArrayList<Point> path = new ArrayList<>();
-        for(int i=0;i<st.size();i++){
+        while(st.size()>0){
             path.add((Point) st.pop());
         }
         return path;

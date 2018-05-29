@@ -40,7 +40,7 @@ public class MainApplicationFrame extends JFrame
 
         setContentPane(desktopPane);
 
-        initRobotClass();
+        //initRobotClass();
         loadFromFile();
 
         setJMenuBar(generateMenuBar());
@@ -93,7 +93,7 @@ public class MainApplicationFrame extends JFrame
         LogWindow logWindow = createLogWindow();
         addWindow(logWindow);
 
-        ArrayList<Robot> temp = new ArrayList<>();
+        ArrayList<AbstractRobot> temp = new ArrayList<>();
         temp.add(robot);
         GameWindow gameWindow = new GameWindow(temp);
         gameWindow.setSize(400,  400);
@@ -158,7 +158,7 @@ public class MainApplicationFrame extends JFrame
                 k++;
                 this.robots.add(robot);
                 robots.add(robot);
-                ArrayList<Robot> temp = new ArrayList<>();
+                ArrayList<AbstractRobot> temp = new ArrayList<>();
                 temp.add(robot);
                 GameWindow gameWindow = new GameWindow(temp);
                 gameWindow.setLocation(sc.nextInt(), sc.nextInt());

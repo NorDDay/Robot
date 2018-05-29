@@ -141,8 +141,8 @@ public abstract class AbstractRobot extends Observable {
                 m_robotPositionX, m_robotPositionY);
         if (distance <1)
         {
-            if(path.size() == curIdPos+1){
-                createGraph();
+            if(path.size() <= curIdPos+1){
+               // createGraph();
                 return;
             }
             curIdPos++;

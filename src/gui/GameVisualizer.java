@@ -19,7 +19,7 @@ import javax.swing.JPanel;
 public class GameVisualizer extends JPanel
 {
     private final Timer m_timer = initTimer();
-    private ArrayList<Robot> robots;
+    private ArrayList<AbstractRobot> robots;
 
 
     private static Timer initTimer() 
@@ -47,7 +47,7 @@ public class GameVisualizer extends JPanel
             @Override
             public void run()
             {
-                for(Robot robot : robots) {
+                for(AbstractRobot robot : robots) {
                     robot.onModelUpdateEvent();
                     robot.notifyObservers(robot);
                 }
@@ -59,7 +59,7 @@ public class GameVisualizer extends JPanel
             public void mouseClicked(MouseEvent e)
             {
                 if(e.getButton() == 1) {
-                    for(Robot robot : robots) {
+                    for(AbstractRobot robot : robots) {
                         robot.setTargetPosition(e.getPoint());
                         robot.createGraph();
                         repaint();
@@ -67,7 +67,7 @@ public class GameVisualizer extends JPanel
                 }
                 else if(e.getButton() == 3){
                     RectangleBarrier square = new RectangleBarrier(e.getPoint());
-                    for(Robot robot : robots) {
+                    for(AbstractRobot robot : robots) {
                         robot.barriers.add(square);
                         robot.createGraph();
                     }
@@ -75,7 +75,7 @@ public class GameVisualizer extends JPanel
                 else{
                     double minDist=10000000;
                     int minI=-1;
-                    for(Robot robot : robots) {
+                    for(AbstractRobot robot : robots) {
                         for (int i = 0; i < robot.barriers.size(); i++) {
                             if (robot.distance(e.getPoint(), robot.barriers.get(i).pos) < minDist) {
                                 minDist = robot.distance(e.getPoint(), robot.barriers.get(i).pos);
@@ -107,7 +107,7 @@ public class GameVisualizer extends JPanel
     {
         super.paint(g);
         Graphics2D g2d = (Graphics2D)g;
-        for(Robot robot : robots) {
+        for(AbstractRobot robot : robots) {
             drawRobot(g2d, round(robot.getPosition().x), round(robot.getPosition().y), robot.getDirection(), robot);
         }
         drawTarget(g2d, robots.get(0).getTargetPosition().x, robots.get(0).getTargetPosition().y);
@@ -126,7 +126,7 @@ public class GameVisualizer extends JPanel
         g.drawOval(centerX - diam1 / 2, centerY - diam2 / 2, diam1, diam2);
     }
     
-    private void drawRobot(Graphics2D g, int x, int y, double direction, Robot robot)
+    private void drawRobot(Graphics2D g, int x, int y, double direction, AbstractRobot robot)
     {
 
         int robotCenterX = round(robot.getPosition().x);
