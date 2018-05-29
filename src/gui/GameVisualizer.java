@@ -19,7 +19,7 @@ import javax.swing.JPanel;
 public class GameVisualizer extends JPanel
 {
     private final Timer m_timer = initTimer();
-    private Robot robot;
+    private ArrayList<Robot> robots;
 
 
     private static Timer initTimer() 
@@ -30,9 +30,10 @@ public class GameVisualizer extends JPanel
     
 
     
-    public GameVisualizer(Robot r)
+    public GameVisualizer(GameWindow win)
     {
-        robot = r;
+
+        robots = win.RobotList;
         m_timer.schedule(new TimerTask()
         {
             @Override
@@ -46,8 +47,10 @@ public class GameVisualizer extends JPanel
             @Override
             public void run()
             {
-                robot.onModelUpdateEvent();
-                robot.notifyObservers(robot);
+                for(Robot robot : robots) {
+                    robot.onModelUpdateEvent();
+                    robot.notifyObservers(robot);
+                }
             }
         }, 0, 10);
         addMouseListener(new MouseAdapter()
@@ -56,27 +59,33 @@ public class GameVisualizer extends JPanel
             public void mouseClicked(MouseEvent e)
             {
                 if(e.getButton() == 1) {
-                    robot.setTargetPosition(e.getPoint());
-                    robot.createGraph();
-                    repaint();
+                    for(Robot robot : robots) {
+                        robot.setTargetPosition(e.getPoint());
+                        robot.createGraph();
+                        repaint();
+                    }
                 }
                 else if(e.getButton() == 3){
                     RectangleBarrier square = new RectangleBarrier(e.getPoint());
-                    robot.barriers.add(square);
-                    robot.createGraph();
+                    for(Robot robot : robots) {
+                        robot.barriers.add(square);
+                        robot.createGraph();
+                    }
                 }
                 else{
                     double minDist=10000000;
                     int minI=-1;
-                    for(int i=0;i<robot.barriers.size();i++){
-                        if(robot.distance(e.getPoint(), robot.barriers.get(i).pos)<minDist){
-                            minDist = robot.distance(e.getPoint(), robot.barriers.get(i).pos);
-                            minI=i;
+                    for(Robot robot : robots) {
+                        for (int i = 0; i < robot.barriers.size(); i++) {
+                            if (robot.distance(e.getPoint(), robot.barriers.get(i).pos) < minDist) {
+                                minDist = robot.distance(e.getPoint(), robot.barriers.get(i).pos);
+                                minI = i;
+                            }
                         }
+                        if (minDist < 10)
+                            robot.barriers.remove(minI);
+                        robot.createGraph();
                     }
-                    if(minDist<10)
-                        robot.barriers.remove(minI);
-                    robot.createGraph();
                 }
             }
         });
@@ -97,10 +106,12 @@ public class GameVisualizer extends JPanel
     public void paint(Graphics g)
     {
         super.paint(g);
-        Graphics2D g2d = (Graphics2D)g; 
-        drawRobot(g2d, round(robot.getPosition().x), round(robot.getPosition().y), robot.getDirection());
-        drawTarget(g2d, robot.getTargetPosition().x, robot.getTargetPosition().y);
-        for(AbstractBarrier e : robot.barriers){
+        Graphics2D g2d = (Graphics2D)g;
+        for(Robot robot : robots) {
+            drawRobot(g2d, round(robot.getPosition().x), round(robot.getPosition().y), robot.getDirection(), robot);
+        }
+        drawTarget(g2d, robots.get(0).getTargetPosition().x, robots.get(0).getTargetPosition().y);
+        for(AbstractBarrier e : robots.get(0).barriers){
             drawRectangle(g2d, (RectangleBarrier) e);
         }
     }
@@ -115,20 +126,23 @@ public class GameVisualizer extends JPanel
         g.drawOval(centerX - diam1 / 2, centerY - diam2 / 2, diam1, diam2);
     }
     
-    private void drawRobot(Graphics2D g, int x, int y, double direction)
+    private void drawRobot(Graphics2D g, int x, int y, double direction, Robot robot)
     {
+
         int robotCenterX = round(robot.getPosition().x);
         int robotCenterY = round(robot.getPosition().y);
-        AffineTransform t = AffineTransform.getRotateInstance(direction, robotCenterX, robotCenterY); 
+
+        AffineTransform t = AffineTransform.getRotateInstance(direction, robotCenterX, robotCenterY);
         g.setTransform(t);
         g.setColor(Color.MAGENTA);
         fillOval(g, robotCenterX, robotCenterY, 30, 10);
         g.setColor(Color.BLACK);
         drawOval(g, robotCenterX, robotCenterY, 30, 10);
         g.setColor(Color.WHITE);
-        fillOval(g, robotCenterX  + 10, robotCenterY, 5, 5);
+        fillOval(g, robotCenterX + 10, robotCenterY, 5, 5);
         g.setColor(Color.BLACK);
-        drawOval(g, robotCenterX  + 10, robotCenterY, 5, 5);
+        drawOval(g, robotCenterX + 10, robotCenterY, 5, 5);
+
     }
     
     private void drawTarget(Graphics2D g, int x, int y)

@@ -5,6 +5,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -38,6 +40,7 @@ public class MainApplicationFrame extends JFrame
 
         setContentPane(desktopPane);
 
+        initRobotClass();
         loadFromFile();
 
         setJMenuBar(generateMenuBar());
@@ -52,13 +55,47 @@ public class MainApplicationFrame extends JFrame
             }
         });
     }
+    private void initRobotClass(){
+        MyClassLoader loader = new MyClassLoader();
+        File folder = new File("C:\\\\Users\\patan\\desktop\\git\\Robot\\src\\classLoad\\");
+        File[] listOfFiles = folder.listFiles();
+
+        for (File file : listOfFiles) {
+            if (file.isFile()) {
+                try {
+                      Class cl = loader.findClass(file.getAbsolutePath());
+                      ArrayList<ArrayList<Edge>> test = new ArrayList<ArrayList<Edge>>();
+                      //Method[] method = cl.getMethods();
+                      Method method = cl.getMethod("findPath", new Class[] { test.getClass() });
+                  //  System.out.println(method[0].toString());
+                    //Выполняем метод m1. Нельзя забывать про метод newInstance(), если метод динамический.
+//                    method.invoke(cl.newInstance(), new Object[] {test});
+                }
+                catch (Exception e){}
+                /*catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }*/
+            }
+        }
+
+    }
     private void addGame(){
         Robot robot = new Robot();
         robots.add(robot);
         LogWindow logWindow = createLogWindow();
         addWindow(logWindow);
 
-        GameWindow gameWindow = new GameWindow(robot);
+        ArrayList<Robot> temp = new ArrayList<>();
+        temp.add(robot);
+        GameWindow gameWindow = new GameWindow(temp);
         gameWindow.setSize(400,  400);
         gameWindow.setLocation(310,10);
         addWindow(gameWindow);
@@ -121,7 +158,9 @@ public class MainApplicationFrame extends JFrame
                 k++;
                 this.robots.add(robot);
                 robots.add(robot);
-                GameWindow gameWindow = new GameWindow(robot);
+                ArrayList<Robot> temp = new ArrayList<>();
+                temp.add(robot);
+                GameWindow gameWindow = new GameWindow(temp);
                 gameWindow.setLocation(sc.nextInt(), sc.nextInt());
                 gameWindow.setSize(sc.nextInt(), sc.nextInt());
                 addWindow(gameWindow);
