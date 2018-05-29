@@ -9,7 +9,13 @@ public class DFSRobot extends AbstractRobot {
     private boolean[] vis;
     private Stack ansStack;
     private int n;
+    public DFSRobot(PointDouble point){
+        m_robotPositionX = point.x;
+        m_robotPositionY = point.y;
+    }
+    public DFSRobot(){
 
+    }
     @Override
     public ArrayList<Point> findPath(ArrayList<ArrayList<Edge>> graph) {
         ansStack = new Stack();

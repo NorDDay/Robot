@@ -39,7 +39,8 @@ public class GameWindow extends JInternalFrame
     }
     public void addRobot(AbstractRobot robot){
         AbstractRobot temp = robot;
-        temp.barriers = RobotList.get(0).barriers;
+        if(RobotList.size()>0)
+            temp.barriers = RobotList.get(0).barriers;
         RobotList.add(temp);
     }
 }

@@ -27,7 +27,7 @@ import log.Logger;
 public class MainApplicationFrame extends JFrame
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
-    private ArrayList<Robot> robots = new ArrayList<>();
+    private ArrayList<GameWindow> games = new ArrayList<>();
 
     public MainApplicationFrame() {
         //Make the big window be indented 50 pixels from each edge
@@ -89,13 +89,13 @@ public class MainApplicationFrame extends JFrame
     }
     private void addGame(){
         Robot robot = new Robot();
-        robots.add(robot);
         LogWindow logWindow = createLogWindow();
         addWindow(logWindow);
 
         ArrayList<AbstractRobot> temp = new ArrayList<>();
         temp.add(robot);
         GameWindow gameWindow = new GameWindow(temp);
+        games.add(gameWindow);
         gameWindow.setSize(400,  400);
         gameWindow.setLocation(310,10);
         addWindow(gameWindow);
@@ -116,23 +116,38 @@ public class MainApplicationFrame extends JFrame
         }
         while(sc1.hasNextLine()){
             String tempScanner = sc1.nextLine();
-            int k = -1;
+            String bar = sc1.nextLine();
+            ArrayList<AbstractBarrier> barrier = new ArrayList<>();
+            for(String s : bar.split(";")){
+                if(s.length()>0){
+                    ArrayList<Double> t = new ArrayList<>();
+                    for(String num : s.split(" ")){
+                        t.add(Double.parseDouble(num));
+                    }
+
+                    barrier.add(new RectangleBarrier(new PointDouble(t.get(0), t.get(1))));
+                }
+            }
+            GameWindow gw = new GameWindow(new ArrayList<>());
+            games.add(gw);
             for(String s : tempScanner.split(";")){
                 if(s.length()>0){
                     ArrayList<Double> t = new ArrayList<>();
                     for(String num : s.split(" ")){
                         t.add(Double.parseDouble(num));
                     }
-                    if(k == -1){
-                        Robot robot = new Robot(new PointDouble(t.get(0), t.get(1)));
-                        robots.add(robot);
-                        k = robots.size()-1;
+
+
+                    AbstractRobot r;
+                    if(t.get(2) == 1){
+                        r = new Robot(new PointDouble(t.get(0), t.get(1)));
                     }
                     else{
-                        robots.get(k).barriers.add( new RectangleBarrier(
-                                new PointDouble(t.get(0), t.get(1))
-                        ));
+                        r = new DFSRobot(new PointDouble(t.get(0), t.get(1)));
                     }
+                    r.barriers = barrier;
+                    gw.addRobot(r);
+
                 }
             }
         }
@@ -154,16 +169,12 @@ public class MainApplicationFrame extends JFrame
                 addWindow(logWindow);
             }
             else if (tempScanner.equals("Игровое поле")){
-                Robot robot = this.robots.get(k);
+                GameWindow gwCur = games.get(k);
                 k++;
-                this.robots.add(robot);
-                robots.add(robot);
                 ArrayList<AbstractRobot> temp = new ArrayList<>();
-                temp.add(robot);
-                GameWindow gameWindow = new GameWindow(temp);
-                gameWindow.setLocation(sc.nextInt(), sc.nextInt());
-                gameWindow.setSize(sc.nextInt(), sc.nextInt());
-                addWindow(gameWindow);
+                gwCur.setLocation(sc.nextInt(), sc.nextInt());
+                gwCur.setSize(sc.nextInt(), sc.nextInt());
+                addWindow(gwCur);
             }
         }
         try {
@@ -178,8 +189,8 @@ public class MainApplicationFrame extends JFrame
                 CoordinateWindow coordWindow = new CoordinateWindow();
                 coordWindow.setLocation(sc.nextInt(), sc.nextInt());
                 coordWindow.setSize(sc.nextInt(), sc.nextInt());
-                if(i<robots.size())
-                    robots.get(i).addObserver(coordWindow);
+                if(i<games.size())
+                    games.get(i).RobotList.get(0).addObserver(coordWindow);
                 i++;
                 addWindow(coordWindow);
             }
@@ -204,9 +215,17 @@ public class MainApplicationFrame extends JFrame
             for (JInternalFrame e : desktopPane.getAllFrames()) {
                 windows.write(e.getTitle() + '\n');
                 if(e.getTitle().equals("Игровое поле")){
-                    maps.write(robots.get(i).getPosition().x+" "+robots.get(i).getPosition().y+";");
-                    for(int j=0;j<robots.get(i).barriers.size();j++){
-                        maps.write(robots.get(i).barriers.get(j).pos.x+" "+robots.get(i).barriers.get(j).pos.y+";");
+                    for(int k = 0;k<games.get(i).RobotList.size();k++){
+                        int val =0;
+                        if(games.get(i).RobotList.get(k) instanceof Robot)
+                            val = 1;
+                        if(games.get(i).RobotList.get(k) instanceof DFSRobot)
+                            val = 2;
+                        maps.write(games.get(i).RobotList.get(k).getPosition().x+" "+games.get(i).RobotList.get(k).getPosition().y+" "+val+";");
+                    }
+                    maps.write('\n');
+                    for(int j=0;j<games.get(i).RobotList.get(0).barriers.size();j++){
+                        maps.write(games.get(i).RobotList.get(0).barriers.get(j).pos.x+" "+games.get(i).RobotList.get(0).barriers.get(j).pos.y+";");
                     }
                     maps.write('\n');
                     i++;
